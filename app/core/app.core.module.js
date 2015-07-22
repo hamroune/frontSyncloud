@@ -5,6 +5,7 @@
     angular
         .module('app.core', [
             'ngMaterial',
+            'ngTouch',
 
             'ui.router',
             'app.utils',

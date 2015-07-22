@@ -5,54 +5,69 @@
 
         var that = this;
 
+        $scope.applications = [
+          {
+            icon : 'img/meteoFrance.png',
+            name: 'meteo france',
+            key:"meteo_fr",
+            zipUrl : "http://blabla.com/blala.zip",
+            events: [{}]
+          },
+          {
+            icon : 'img/auchandrive.png',
+            name: 'auchandrive',
+            key: 'auchandrive',
+            zipUrl : "http://blabla.com/blala.zip",
+            events: [{}]
+          },
+          {
+            icon : 'img/bonial.png',
+            name: 'bonial',
+            key: 'bonial',
+            zipUrl : "http://blabla.com/blala.zip",
+            events: [{}]
+          },
+          {
+            icon : 'img/duolingo.png',
+            name: 'duolingo',
+            key: 'duolingo',
+            zipUrl : "http://blabla.com/blala.zip",
+            events: [{}]
+          },
+          {
+            icon : 'img/promoqui.png',
+            name: 'promoqui',
+            key: 'promoqui',
+            zipUrl : "http://blabla.com/blala.zip",
+            events: [{}]
+          },
+          {
+            icon : 'img/spoticast.png',
+            name: 'spoticast',
+            key: 'spoticast',
+            zipUrl : "http://blabla.com/blala.zip",
+            events: [{}]
+          },
+          {
+            icon : 'img/uber.png',
+            name: 'uber',
+            key: 'uber',
+            zipUrl : "http://blabla.com/blala.zip",
+            events: [{}]
+          }
+        ];
 
-    $scope.todos = [
-      {
-        face : 'img/meteoFrance.png',
-        name: 'meteo france',
-        zipUrl : "http://blabla.com/blala.zip",
-        events: [{}]
-      },
-      {
-        face : 'img/auchandrive.png',
-        name: 'auchandrive',
-        zipUrl : "http://blabla.com/blala.zip",
-        events: [{}]
-      },
-      {
-        face : 'img/bonial.png',
-        name: 'bonial',
-        zipUrl : "http://blabla.com/blala.zip",
-        events: [{}]
-      },
-      {
-        face : 'img/duolingo.png',
-        name: 'duolingo',
-        zipUrl : "http://blabla.com/blala.zip",
-        events: [{}]
-      },
-      {
-        face : 'img/promoqui.png',
-        name: 'promoqui',
-        zipUrl : "http://blabla.com/blala.zip",
-        events: [{}]
-      },
-      {
-        face : 'img/spoticast.png',
-        name: 'spoticast',
-        zipUrl : "http://blabla.com/blala.zip",
-        events: [{}]
-      },
-      {
-        face : 'img/uber.png',
-        name: 'uber',
-        zipUrl : "http://blabla.com/blala.zip",
-        events: [{}]
-      }
-    ];
-    $scope.a=function(){
-      console.log(2);
-    }
+        $scope.onSelectApp = function(app){
+          console.log('Selected App (for detail)', app);
+        }
+
+        $scope.onStartApp = function(app){
+          console.log('Launch App', app);
+        }
+
+        $scope.onRightSwipe = function(){
+          console.log('onRightSwipe');
+        }
 
     }
 

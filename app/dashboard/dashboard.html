@@ -1,15 +1,16 @@
 <md-toolbar layout="row">
       <div class="md-toolbar-tools">
-        <md-button ng-click="toggleSidenav('left')" hide-gt-sm class="md-icon-button">
-          <md-icon aria-label="Menu" md-svg-icon="https://s3-us-west-2.amazonaws.com/s.cdpn.io/68133/menu.svg"></md-icon>
-        </md-button>
-        <h1>Syn Cloud</h1>
+        <h1>Sync Cloud</h1>
       </div>
 </md-toolbar>
 <md-content>
     <md-list>
-    <md-list-item ng-repeat="item in todos" ng-click="a()">
-      <img ng-src="{{item.face}}?{{$index}}" class="md-avatar" alt="{{item.who}}" />
+    <md-list-item ng-repeat="item in applications"
+       on-longpress="onSelectApp(item)"
+       ng-click="onStartApp(item)"
+
+       >
+      <img ng-src="{{item.icon}}?{{$index}}" class="md-avatar" />
       <div class="md-list-item-text">
       <h3>{{ item.name }}</h3>
       </div>
