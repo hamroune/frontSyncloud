@@ -2,53 +2,57 @@
     'use strict';
 
     function DashboardCtrl($q,$state, $rootScope, $scope, $log, MenuService) {
-        
+
         var that = this;
 
-         var imagePath = 'img/meteo-france.png';
-    $scope.phones = [
-      { type: 'Home', number: '(555) 251-1234' },
-      { type: 'Cell', number: '(555) 786-9841' },
-    ];
-    
+
     $scope.todos = [
       {
-        face : imagePath,
-        what: 'Brunch this weekend?',
-        who: 'Min Li Chan',
-        when: '3:08PM',
-        notes: " I'll be in your neighborhood doing errands"
+        face : 'img/meteoFrance.png',
+        name: 'meteo france',
+        zipUrl : "http://blabla.com/blala.zip",
+        events: [{}]
       },
       {
-        face : imagePath,
-        what: 'Brunch this weekend?',
-        who: 'Min Li Chan',
-        when: '3:08PM',
-        notes: " I'll be in your neighborhood doing errands"
+        face : 'img/auchandrive.png',
+        name: 'auchandrive',
+        zipUrl : "http://blabla.com/blala.zip",
+        events: [{}]
       },
       {
-        face : imagePath,
-        what: 'Brunch this weekend?',
-        who: 'Min Li Chan',
-        when: '3:08PM',
-        notes: " I'll be in your neighborhood doing errands"
+        face : 'img/bonial.png',
+        name: 'bonial',
+        zipUrl : "http://blabla.com/blala.zip",
+        events: [{}]
       },
       {
-        face : imagePath,
-        what: 'Brunch this weekend?',
-        who: 'Min Li Chan',
-        when: '3:08PM',
-        notes: " I'll be in your neighborhood doing errands"
+        face : 'img/duolingo.png',
+        name: 'duolingo',
+        zipUrl : "http://blabla.com/blala.zip",
+        events: [{}]
       },
       {
-        face : imagePath,
-        what: 'Brunch this weekend?',
-        who: 'Min Li Chan',
-        when: '3:08PM',
-        notes: " I'll be in your neighborhood doing errands"
+        face : 'img/promoqui.png',
+        name: 'promoqui',
+        zipUrl : "http://blabla.com/blala.zip",
+        events: [{}]
       },
+      {
+        face : 'img/spoticast.png',
+        name: 'spoticast',
+        zipUrl : "http://blabla.com/blala.zip",
+        events: [{}]
+      },
+      {
+        face : 'img/uber.png',
+        name: 'uber',
+        zipUrl : "http://blabla.com/blala.zip",
+        events: [{}]
+      }
     ];
-
+    $scope.a=function(){
+      console.log(2);
+    }
 
     }
 

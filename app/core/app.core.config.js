@@ -10,12 +10,13 @@
 
     function config($stateProvider, $urlRouterProvider) {
 
-        $stateProvider.state('home', {
+        $stateProvider
+          .state('home', {
                 url: "/home",
                 templateUrl: "dashboard/dashboard.html",
                 controller: 'DashboardCtrl'
             }
-        );
+          );
 
 
         $urlRouterProvider.otherwise("/home");

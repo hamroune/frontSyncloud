@@ -1,5 +1,4 @@
 {
-  "directory": "app/bower_components/",
-  "proxy" : "http://D00%5CTL5234:pwRGQB32@proxy.cofely-fr.gdfsuez.net:8080/",
-  "https-proxy" : "http://D00%5CTL5234:pwRGQB32@proxy.cofely-fr.gdfsuez.net:8080/"
+  "directory": "app/bower_components/"
+
 }
