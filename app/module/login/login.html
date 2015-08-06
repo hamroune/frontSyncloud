@@ -1,0 +1,27 @@
+<toolbar></toolbar>
+<md-content >
+
+  <div class="md-whiteframe-z2 colorBlue" layout layout-align="center center" style="width:300px;margin:60px auto;height:300px;min-height:300px;min-width:30%" >
+
+    <form ng-submit="login()" method="POST">
+    <div></div>
+    <md-input-container>
+      <label  style="color:white">Username</label>
+      <input ng-model="username" type="text"  style="border-color:white">
+    </md-input-container>
+    <md-input-container >
+      <label style="color:white">Password</label>
+      <input ng-model="password" type="password" style="border-color:white;">
+    </md-input-container>
+    <div class="md-whiteframe-z2" style="background-color:#FF1111;color:white;padding:10px;text-align:center" ng-show="error">
+      {{error}}
+    </div>
+    <md-input-container >
+      <md-button class="md-raised" style="background-color:#0E94EB;color:white;position:relative;top:30px">Login</md-button>
+    </md-input-container>
+    </form>
+  </div>
+
+
+
+</md-content>

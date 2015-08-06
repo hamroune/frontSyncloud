@@ -1,0 +1,15 @@
+<toolbar></toolbar>
+<md-content>
+    <md-list>
+      <md-list-item ng-repeat="item in apps"
+         on-longpress="onSelectApp(item)"
+         ng-click="onStartApp(item)"
+
+         >
+        <img ng-src="{{item.iconUrl}}?{{$index}}" class="md-avatar" />
+        <div class="md-list-item-text">
+          <h3>{{ item.name }}</h3>
+        </div>
+      </md-list-item>
+    </md-list>
+</md-content>

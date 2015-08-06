@@ -1,10 +1,10 @@
 (function () {
 
     'use strict';
-
     angular
         .module('app.core', [
             'ngMaterial',
+            'ngMessages',
             'ngTouch',
 
             'ui.router',
@@ -14,6 +14,8 @@
             'app.sidebar',
             'app.navbar',
 
-            'app.dashboard'
+            'app.login',
+            'app.dashboard',
+            'app.toolbar'
         ]);
 })();

@@ -1,10 +1,9 @@
 (function () {
     'use strict';
 
-    function DashboardCtrl($q,$state, $rootScope, $scope, $log, MenuService) {
-
-        var that = this;
-
+    function DashboardCtrl($q,$state, $rootScope, $scope, $log,$location, MenuService) {
+        filepicker.setKey("AxyphnToYSryOvLFNnrsAz");
+        
         $scope.applications = [
           {
             icon : 'img/meteoFrance.png',
@@ -71,7 +70,7 @@
 
     }
 
-    DashboardCtrl.$inject = ["$q","$state","$rootScope","$scope", "$log", "menuService"];
+    DashboardCtrl.$inject = ["$q","$state","$rootScope","$scope", "$log","$location", "menuService"];
 
     angular
         .module('app.dashboard')

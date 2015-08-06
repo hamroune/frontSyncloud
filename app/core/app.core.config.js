@@ -11,15 +11,20 @@
     function config($stateProvider, $urlRouterProvider) {
 
         $stateProvider
+          .state('login', {
+              url: "/login",
+              templateUrl: "module/login/login.html",
+              controller: 'LoginCtrl'
+          })
           .state('home', {
                 url: "/home",
-                templateUrl: "dashboard/dashboard.html",
+                templateUrl: "module/dashboard/dashboard.html",
                 controller: 'DashboardCtrl'
             }
           );
 
 
-        $urlRouterProvider.otherwise("/home");
+        $urlRouterProvider.otherwise("/login");
     }
 
 })();
