@@ -2,8 +2,26 @@
     'use strict';
 
     function DashboardCtrl($q,$state, $rootScope, $scope, $log,$location, MenuService) {
-        filepicker.setKey("AxyphnToYSryOvLFNnrsAz");
-        
+      var LOCAL_BASE = "cdvfile://localhost/persistent/Download/";
+      var uri = "https://www.filepicker.io/api/file/9m0lwIiXQt2EN0sXoDA8";alert("-");
+      var fileTransfer = new FileTransfer();alert("+");
+      var uri = encodeURI(url);
+      var localFile = LOCAL_BASE+fileName;
+
+                fileTransfer.download(
+                    uri,
+                    localFile,
+                    function(entry) {
+                        console.log("download complete: " + entry.toURL());
+
+                    },
+                    function(error) {
+
+                        console.log("download error source " + error.source);
+                        console.log("download error target " + error.target);
+                        console.log("upload error code" + error.code);
+                    }
+                );
         $scope.applications = [
           {
             icon : 'img/meteoFrance.png',
