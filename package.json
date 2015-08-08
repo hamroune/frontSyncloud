@@ -1,8 +1,9 @@
 {
-  "package.android" : "",
+  "package.android": "",
   "name": "SynCloud",
   "version": "0.0.1",
   "devDependencies": {
+    "cors": "^2.7.1",
     "del": "^1.2.0",
     "gulp": "^3.9.0",
     "gulp-clean": "^0.3.1",
@@ -25,4 +26,3 @@
     "through2": "^2.0.0"
   }
 }
-

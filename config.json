@@ -26,42 +26,21 @@
       ]
 
     ,"srcFiles" : [
-         "app/app.module.js",
-
-         "app/salesforce/mock/**/*.module.js",
-         "app/salesforce/mock/**/*.js",
+        "app/app.module.js",
 
          "app/common/**/*.module.js",
          "app/common/**/*.js",
 
 
-         "app/module/login/app.login.module.js",
-         "app/module/login/app.login.controller.js",
-         "app/module/dashboard/app.dashboard.module.js",
-         "app/module/dashboard/app.dashboard.controller.js",
-         "app/module/directives/toolbar/app.toolbar.module.js",
-         "app/module/directives/toolbar/app.toolbar.directive.js",
-         "app/wrapper/mock/**/*.module.js",
-         "app/wrapper/mock/**/*.js",
+         "app/module/login/**/*.module.js",
+         "app/module/login/**/*.js",
 
-         "app/data/**/*.module.js",
-         "app/data/**/*.js",
+         "app/module/dashboard/**/*.module.js",
+         "app/module/dashboard/**/*.js",
 
-          "app/contracts/**/*.module.js",
-         "app/contracts/**/*.js",
-
-         "app/compte/**/*.module.js",
-         "app/compte/**/*.js",
-
-         "app/cases/**/*.module.js",
-         "app/cases/**/*.filters.js",
-         "app/cases/**/*.js",
-
-         "app/installations/**/*.module.js",
-         "app/installations/**/*.js",
-
-         "app/user/**/*.module.js",
-         "app/user/**/*.js",
+         "app/module/directives/**/*.module.js",
+         "app/module/directives/**/*.js",
+         
 
          "app/core/**/*.module.js",
          "app/core/**/*.js",

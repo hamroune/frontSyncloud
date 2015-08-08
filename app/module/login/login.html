@@ -7,12 +7,14 @@
     <div></div>
     <md-input-container>
       <label  style="color:white">Username</label>
-      <input ng-model="username" type="text"  style="border-color:white">
+      <input ng-model="user.username" type="text"  style="border-color:white">
     </md-input-container>
+
     <md-input-container >
       <label style="color:white">Password</label>
-      <input ng-model="password" type="password" style="border-color:white;">
+      <input ng-model="user.password" type="password" style="border-color:white;">
     </md-input-container>
+
     <div class="md-whiteframe-z2" style="background-color:#FF1111;color:white;padding:10px;text-align:center" ng-show="error">
       {{error}}
     </div>

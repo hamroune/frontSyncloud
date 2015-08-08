@@ -15,6 +15,7 @@ var minimist = require('minimist');
 var clean = require('gulp-clean');
 var shell = require('gulp-shell');
 var runSequence = require('run-sequence');
+var cors = require('cors');
 
 var options = minimist(process.argv.slice(2));
 
@@ -75,7 +76,10 @@ gulp.task('server', function() {
   connect.server({
     root: 'www',
     port: port,
-    livereload: false
+    livereload: false,
+    middleware: function() {
+        return [cors()];
+    }
   });
 });
 
