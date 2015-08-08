@@ -19,8 +19,19 @@
 
         $scope.getApps = function(){
             ApplicationService.getCurrentUser().then(function(aUser){
-                $scope.applications = aUser.apps;
-                console.log('Apps ==>', aUser.apps);
+                
+                
+                var promises = [];
+                _.each(aUser.apps, function(app){
+                    promises.push(ApplicationService.getApplication(app));
+                })
+                $q.all(promises).then(function(applications){
+                    console.log('applications', applications);
+                    $scope.applications = applications;
+
+                    //$scope.downloadApps();
+                });
+
                 $timeout(function(){
                     $scope.$apply();
                 })
@@ -30,16 +41,24 @@
             });
         }
 
-        $scope.onSelectApp = function(app){
-          console.log('Selected App (for detail)', app);
+        $scope.downloadApps = function(){
+            _.each($scope.applications, function(app){
+                $scope.downloadApp(app);
+            })
         }
 
-        $scope.onStartApp = function(app){
+        $scope.downloadApp = function(app){
+              return ApplicationService.downloadZip(app).then(function(){
+                    app.msg = "Complete Zip download"
+                });
+        }
+
+        $scope.onOpenApp = function(app){
           console.log('Launch App', app);
-        }
-
-        $scope.onRightSwipe = function(){
-          console.log('onRightSwipe');
+          $scope.downloadApp(app).then(function(){
+            alert('Go !!!')
+            ApplicationService.openApp(app);
+          });
         }
 
         $scope.getApps();
