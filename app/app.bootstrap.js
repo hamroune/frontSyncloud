@@ -3,6 +3,7 @@
     'use strict';
 
     if ('addEventListener' in document) {
+        alert('listen deviceready')
         document.addEventListener('DOMContentLoaded', contentLoaded, false);
         document.addEventListener('deviceready', deviceReady, false);
     }
@@ -15,6 +16,7 @@
     }
 
     function deviceReady() {
+        alert('starting...')
         angular.bootstrap(document, ['app']);
     }
 

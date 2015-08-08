@@ -119,39 +119,19 @@
     ,"srcFiles" : [
          "app/app.module.js",
 
-         "app/salesforce/*.module.js",
-         "app/salesforce/*.js",
-
          "app/common/**/*.module.js",
          "app/common/**/*.js",
 
-         "app/dashboard/**/*.module.js",
-         "app/dashboard/**/*.js",
 
-         "app/wrapper/salesforce/**/*.module.js",
-         "app/wrapper/salesforce/**/*.js",
+         "app/module/login/**/*.module.js",
+         "app/module/login/**/*.js",
 
-         "app/data/**/*.module.js",
-         "app/data/**/*.js",
+         "app/module/dashboard/**/*.module.js",
+         "app/module/dashboard/**/*.js",
 
-         "app/accounts/**/*.module.js",
-         "app/accounts/**/*.js",
-
-          "app/contracts/**/*.module.js",
-         "app/contracts/**/*.js",
-
-         "app/compte/**/*.module.js",
-         "app/compte/**/*.js",
-
-         "app/cases/**/*.module.js",
-         "app/cases/**/*.filters.js",
-         "app/cases/**/*.js",
-
-         "app/installations/**/*.module.js",
-         "app/installations/**/*.js",
-
-         "app/user/**/*.module.js",
-         "app/user/**/*.js",
+         "app/module/directives/**/*.module.js",
+         "app/module/directives/**/*.js",
+         
 
          "app/core/**/*.module.js",
          "app/core/**/*.js",
@@ -163,22 +143,26 @@
                       "app/bower_components/jquery/dist/jquery.min.js",
                       "app/bower_components/angular/angular.min.js",
                       "app/bower_components/angular-animate/angular-animate.min.js",
+                      "app/bower_components/angular-aria/angular-aria.min.js",
+                      "app/bower_components/angular-material/angular-material.min.js",
+                      "app/bower_components/angular-messages/angular-messages.min.js",
                       "app/bower_components/angular-ui-router/release/angular-ui-router.min.js",
                       "app/bower_components/angular-touch/angular-touch.min.js",
                       "app/bower_components/fastclick/lib/fastclick.js",
-
                       "app/bower_components/sugar/release/sugar.min.js",
-
                       "app/bower_components/lodash/lodash.min.js",
-
                       "app/bower_components/bootstrap/dist/js/bootstrap.min.js",
+                      "app/bower_components/lodash/lodash.min.js",
+                      "app/bower_components/pouchdb/dist/pouchdb.min.js",
+                      "app/bower_components/pouchdb-authentication/dist/pouchdb.authentication.min.js",
+                      "app/bower_components/filepicker.io/filepicker.min.js",
 
-                       "app/lib/dashboard.js",
                       "app/lib/html5shiv.min.js",
                       "app/lib/ie10-viewport-bug-workaround.js",
                       "app/lib/ie-emulation-modes-warning.js",
                       "app/lib/respond.min.js",
                       "app/lib/slideout.js",
+
 
                       "app/resources/motifs.js",
                       "app/resources/fonctions.js",
