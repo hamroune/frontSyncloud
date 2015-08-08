@@ -26,8 +26,8 @@
             db.login($rootScope.user.username, $scope.user.password , function (err,response) {
               if (err) {
                 if (err.name === 'unauthorized') {
-                  $scope.error="Userame or Password incorrect";                }
-                else {
+                  $scope.error="Userame or Password incorrect";                
+                }else {
                   $scope.error=err;
                 }
               }
