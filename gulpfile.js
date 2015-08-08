@@ -211,7 +211,7 @@ gulp.task('build', function(callback) {
 
 
 gulp.task('cordova:run', shell.task([
-  'cordova run'
+  'cordova run android --device'
 ]));
 
 
