@@ -1,7 +1,10 @@
 (function () {
     'use strict';
 
-    function DashboardCtrl($timeout,$q,$state, $rootScope, $scope, $log,$location, MenuService, ApplicationService) {
+    function DashboardCtrl($timeout,$q,$state, $rootScope, $scope, $log,$location, MenuService, ApplicationService, localStorageService) {
+
+        var user = localStorageService.get("user");
+        $rootScope.user = $rootScope.user || user; 
 
         if(!$rootScope.user){
             $state.go('login');
@@ -41,7 +44,7 @@
 
     }
 
-    DashboardCtrl.$inject = ["$timeout","$q","$state","$rootScope","$scope", "$log","$location", "menuService", "ApplicationService"];
+    DashboardCtrl.$inject = ["$timeout","$q","$state","$rootScope","$scope", "$log","$location", "menuService", "ApplicationService", "localStorageService"];
 
     angular
         .module('app.dashboard')

@@ -65,6 +65,7 @@
                       "app/bower_components/pouchdb/dist/pouchdb.min.js",
                       "app/bower_components/pouchdb-authentication/dist/pouchdb.authentication.min.js",
                       "app/bower_components/filepicker.io/filepicker.min.js",
+                      "app/bower_components/angular-local-storage/dist/angular-local-storage.min.js",
 
                       "app/lib/html5shiv.min.js",
                       "app/lib/ie10-viewport-bug-workaround.js",
@@ -135,6 +136,7 @@
                       "app/bower_components/pouchdb/dist/pouchdb.min.js",
                       "app/bower_components/pouchdb-authentication/dist/pouchdb.authentication.min.js",
                       "app/bower_components/filepicker.io/filepicker.min.js",
+                      "app/bower_components/angular-local-storage/dist/angular-local-storage.min.js",
 
                       "app/lib/html5shiv.min.js",
                       "app/lib/ie10-viewport-bug-workaround.js",

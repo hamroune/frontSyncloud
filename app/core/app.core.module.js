@@ -3,6 +3,7 @@
     'use strict';
     angular
         .module('app.core', [
+            'LocalStorageModule',
             'ngMaterial',
             'ngMessages',
             'ngTouch',

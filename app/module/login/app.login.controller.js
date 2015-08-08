@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    function LoginCtrl($q,$state, $rootScope, $scope, $log, $location) {
+    function LoginCtrl($q,$state, $rootScope, $scope, $log, $location, localStorageService) {
         var that = this;
 
         $rootScope.user ={};
@@ -44,6 +44,8 @@
               }
               else{
 
+                localStorageService.set("user", $rootScope.user);
+
                 console.log('Athenticated ', response);
                 $rootScope.BASE_URL = 'http://'+$rootScope.user.username+':'+$scope.user.password+'@195.154.223.114:5984/';
                 
@@ -61,7 +63,7 @@
         }
     }
 
-    LoginCtrl.$inject = ["$q","$state","$rootScope","$scope", "$log","$location"];
+    LoginCtrl.$inject = ["$q","$state","$rootScope","$scope", "$log","$location", "localStorageService"];
 
     angular
         .module('app.login')
