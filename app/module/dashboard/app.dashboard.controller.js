@@ -12,7 +12,7 @@
         }
       
 
-       $rootScope.$on('users_replicat', function(change){
+        $rootScope.$on('users_replicat', function(change){
             console.log('changes', change);
             $scope.getApps();
         });
@@ -25,6 +25,8 @@
                     $scope.$apply();
                 })
 
+            }, function(){
+                alert('Error getting current user')
             });
         }
 

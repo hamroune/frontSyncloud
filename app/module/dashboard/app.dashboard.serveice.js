@@ -15,7 +15,9 @@
 
     		dbUsers.get(currentUserName).then(function (user) {
     			defered.resolve(user);
-    		});
+    		}, function(){
+                defered.reject();
+            });
         	return defered.promise;
     	}
         

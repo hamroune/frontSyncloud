@@ -12,15 +12,22 @@
           var remoteDb = new PouchDB(url);
           
           localDb.sync(remoteDb, {
-            live: true
-          })
-          .on('change', function (change) {
-            // yo, something changed!
-            $rootScope.$broadcast(dbname, change);
-
-          })
-          .on('error', function (err) {
-            
+            live: true,
+            retry: true
+          }).on('change', function (info) {
+            // handle change
+          }).on('paused', function () {
+            // replication paused (e.g. user went offline)
+            $rootScope.$broadcast(dbname);
+          }).on('active', function () {
+            // replicate resumed (e.g. user went back online)
+            $rootScope.$broadcast(dbname);
+          }).on('denied', function (info) {
+            // a document failed to replicate, e.g. due to permissions
+          }).on('complete', function (info) {
+            // handle complete
+          }).on('error', function (err) {
+            // handle error
           });
 
         }
@@ -50,9 +57,12 @@
                 $rootScope.BASE_URL = 'http://'+$rootScope.user.username+':'+$scope.user.password+'@195.154.223.114:5984/';
                 
                 $rootScope.sync('users_replicat');
+
                 $rootScope.sync('applications');
 
                 $state.go("home");
+
+                
               }
 
 
