@@ -3,12 +3,11 @@
 
     function ApplicationService($q, $rootScope) {
 
-    	var URL_APPLICATIONS = $rootScope.BASE_URL+"applications";
-    	var URL_USERS = $rootScope.BASE_URL+"_users/";
+    	var URL_APPLICATIONS = "applications";
+    	var URL_USERS = "users_replicat";
 
     	var dbUsers = new PouchDB(URL_USERS);
     	var dbApplications = new PouchDB(URL_APPLICATIONS);
-
 
     	this.getCurrentUser = function(){
     		var currentUserName = "org.couchdb.user:"+$rootScope.user.username;

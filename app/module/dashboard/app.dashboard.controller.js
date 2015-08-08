@@ -1,18 +1,29 @@
 (function () {
     'use strict';
 
-    function DashboardCtrl($q,$state, $rootScope, $scope, $log,$location, MenuService, ApplicationService) {
+    function DashboardCtrl($timeout,$q,$state, $rootScope, $scope, $log,$location, MenuService, ApplicationService) {
 
-        console.log()
+        if(!$rootScope.user){
+            $state.go('login');
+            return;
+        }
       
 
-        ApplicationService.getCurrentUser().then(function(aUser){
-          console.log('aUser', aUser);
-
-            $scope.applications = aUser.apps;
+       $rootScope.$on('users_replicat', function(change){
+            console.log('changes', change);
+            $scope.getApps();
         });
 
-        
+        $scope.getApps = function(){
+            ApplicationService.getCurrentUser().then(function(aUser){
+                $scope.applications = aUser.apps;
+                console.log('Apps ==>', aUser.apps);
+                $timeout(function(){
+                    $scope.$apply();
+                })
+
+            });
+        }
 
         $scope.onSelectApp = function(app){
           console.log('Selected App (for detail)', app);
@@ -26,9 +37,11 @@
           console.log('onRightSwipe');
         }
 
+        $scope.getApps();
+
     }
 
-    DashboardCtrl.$inject = ["$q","$state","$rootScope","$scope", "$log","$location", "menuService", "ApplicationService"];
+    DashboardCtrl.$inject = ["$timeout","$q","$state","$rootScope","$scope", "$log","$location", "menuService", "ApplicationService"];
 
     angular
         .module('app.dashboard')

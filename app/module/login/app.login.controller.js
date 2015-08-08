@@ -7,10 +7,21 @@
         $rootScope.user ={};
 
         $rootScope.sync = function(dbname){
-          var localDB = new PouchDB(dbname);
+          var localDb = new PouchDB(dbname);
           var url = $rootScope.BASE_URL+dbname;
           var remoteDb = new PouchDB(url);
-          localDB.sync(remoteDb);
+          
+          localDb.sync(remoteDb, {
+            live: true
+          })
+          .on('change', function (change) {
+            // yo, something changed!
+            $rootScope.$broadcast(dbname, change);
+
+          })
+          .on('error', function (err) {
+            
+          });
 
         }
 
