@@ -20,7 +20,6 @@
             });
         	return defered.promise;
     	}
-        
 
         this.getApplication = function(){
 
@@ -31,6 +30,24 @@
 
         	return defered.promise;
         }
+
+        this.downloadZip = function (app){
+
+        }
+
+        this.unzipFil = function(app){
+            //Unzip the local Zip file
+        }
+
+        this.downloadIcon = function(app){
+            //from remote to local
+        }
+
+        this.launchApp = function(app){
+
+        }
+
+
 
        
 
