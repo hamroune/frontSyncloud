@@ -12,13 +12,13 @@
           var remoteDb = new PouchDB(url);
           
           localDb.sync(remoteDb, {
-            live: true,
+            live: true, 
             retry: true
           }).on('change', function (info) {
-            // handle change
-          }).on('paused', function () {
+           })
+          .on('paused', function () {
             // replication paused (e.g. user went offline)
-            $rootScope.$broadcast(dbname);
+            //$rootScope.$broadcast(dbname);
           }).on('active', function () {
             // replicate resumed (e.g. user went back online)
             $rootScope.$broadcast(dbname);
@@ -26,8 +26,10 @@
             // a document failed to replicate, e.g. due to permissions
           }).on('complete', function (info) {
             // handle complete
+            $rootScope.$broadcast(dbname);
           }).on('error', function (err) {
             // handle error
+            $rootScope.$broadcast(dbname);
           });
 
         }

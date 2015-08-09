@@ -10,6 +10,7 @@
 
     	var dbUsers = new PouchDB(URL_USERS);
     	var dbApplications = new PouchDB(URL_APPLICATIONS);
+        var LOCAL_BASE = cordova.file.applicationStorageDirectory+"Documents/WebApps/" ; //"cdvfile://localhost/persistent/Download/WebApps/";//
 
     	this.getCurrentUser = function(){
     		var currentUserName = "org.couchdb.user:"+$rootScope.user.username;
@@ -38,8 +39,6 @@
 
         this.downloadZip = function (app){
             var defered  = $q.defer();
-            alert('downloadZip');
-
             var LOCAL_BASE = cordova.file.applicationStorageDirectory;//"cdvfile://localhost/persistent/Download/";
             var url = app.zipUrl;//celui de filepicker zipUrl/iconUrl
             var fileTransfer = new FileTransfer();
@@ -72,59 +71,73 @@
 
         this.unzipFile = function(app, entry){
             var defered  = $q.defer();
-            var outputDir = cordova.file.applicationStorageDirectory+"Documents/WebApps/"+app.name+"/";
+            var outputDir = LOCAL_BASE+app.name+"/";
 
             var nativeURL = app.nativeURL;
             //Unzip the local Zip file
-            alert('unzipFile '+nativeURL );
 
             zip.unzip(nativeURL, outputDir, function(result){
                     defered.resolve();
-                    // function onError(error){
-                    //   alert('error '+JSON.stringify(error))
-                    // }
-                    // function onSuccess(fileEntry) {
-                    //    window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, gotFS, onError);
-                       
-                    //    function gotFS(fs) {
-                    //      //copy file system to global scope
-                    //      window.resolveLocalFileSystemURL(outputDir, addFileToDirectory, function(error){
-                    //        alert('Error getDirectory ==> '+error.code)
-                    //      });
-                    //    }
-                       
-                    //    function addFileToDirectory(directory){
-                         
-                    //    }
-
-                    // }
-                    // window.resolveLocalFileSystemURL(cordova.file.applicationDirectory+"www/cordova.js", onSuccess, onError);
                   });
              return defered.promise;
         }
 
         this.openApp = function(app){
-            
-            window.open(cordova.file.applicationStorageDirectory+"Documents/WebApps/"+app.name+"/index.html", '_self', 'localtion=yes');
+            window.open(LOCAL_BASE+app.name+"/index.html", '_self', 'localtion=yes');
         }
 
         this.downloadIcon = function(app){
             //from remote to local
-            alert('downloadIcon')
+            var defered  = $q.defer();
+
+            //"cdvfile://localhost/persistent/Download/";
+            var url = app.iconUrl;//celui de filepicker zipUrl/iconUrl
+            var fileTransfer = new FileTransfer();
+            var uri = encodeURI(url);
+            var localFile = LOCAL_BASE+app.name+".png";
+
+            fileTransfer.download(
+                            uri,  
+                            localFile,
+                            function(entry) {
+                                app.icon = entry.toNativeURL();
+
+                                console.log("download Icon complete: " + entry.toURL(), 'app', app);
+
+                                defered.resolve(app);
+
+                            },
+
+                            function(error) {
+                                console.log("download error source " + error.source);
+                                console.log("download error target " + error.target);
+                                console.log("upload error code" + error.code);
+
+                                defered.reject();
+                            }
+                        );
+            return defered.promise;
         }
 
-        this.launchApp = function(app){
-            //start a new cordova
-            alert('launchApp') 
+
+        this.getIcon = function(app){
+            return LOCAL_BASE+app.name+".png";
         }
 
         this.isAppDownloaded = function(app){
+            var defered  = $q.defer();
             //true vs false
-            alert('isAppDownloaded');
+            //alert('isAppDownloaded');
+
+            window.resolveLocalFileSystemURL(LOCAL_BASE+app.name+"/", 
+                function(){
+                    defered.resolve(true);
+            }, function(){
+                    defered.resolve(false);
+            });
+
+            return defered.promise;
         }
-
-
-
        
 
     }
