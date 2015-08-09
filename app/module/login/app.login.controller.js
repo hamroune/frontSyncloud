@@ -3,8 +3,14 @@
 
     function LoginCtrl($q,$state, $rootScope, $scope, $log, $location, localStorageService) {
         var that = this;
+        var user = localStorageService.get("user");
+        $rootScope.user = $rootScope.user || user; 
 
-        $rootScope.user ={};
+        if($rootScope.user){
+            $state.go('home');
+            return;
+        }
+
 
         $rootScope.sync = function(dbname){
           var localDb = new PouchDB(dbname);
