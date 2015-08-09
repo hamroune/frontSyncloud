@@ -4,13 +4,20 @@
     function DashboardCtrl($timeout,$q,$state, $rootScope, $scope, $log,$location, MenuService, ApplicationService, localStorageService) {
 
         var user = localStorageService.get("user");
-        $rootScope.user = $rootScope.user || user; 
-
-        if(!$rootScope.user){
+       
+        
+        if(!!!user || !!!user.username){
             $state.go('login');
             return;
         }
-      
+
+        $rootScope.user = user;
+
+
+        ApplicationService.sync('users_replicat');
+
+        ApplicationService.sync('applications');
+
 
         $scope.showLoader = true;
 

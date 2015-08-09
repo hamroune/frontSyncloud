@@ -1,55 +1,25 @@
 (function () {
     'use strict';
 
-    function LoginCtrl($q,$state, $rootScope, $scope, $log, $location, localStorageService) {
+    function LoginCtrl($q,$state, $rootScope, $scope, $log, $location, localStorageService, ApplicationService) {
         var that = this;
-        var user = localStorageService.get("user");
-        $rootScope.user = $rootScope.user || user; 
 
-        if($rootScope.user){
-            $state.go('home');
-            return;
+        $rootScope.lougout = function(){
+          localStorageService.set("user", null);
+          $state.go('login');
         }
 
-
-        $rootScope.sync = function(dbname){
-          var localDb = new PouchDB(dbname);
-          var url = $rootScope.BASE_URL+dbname;
-          var remoteDb = new PouchDB(url);
-          
-          localDb.sync(remoteDb, {
-            live: true, 
-            retry: true
-          }).on('change', function (info) {
-           })
-          .on('paused', function () {
-            // replication paused (e.g. user went offline)
-            //$rootScope.$broadcast(dbname);
-          }).on('active', function () {
-            // replicate resumed (e.g. user went back online)
-            $rootScope.$broadcast(dbname);
-          }).on('denied', function (info) {
-            // a document failed to replicate, e.g. due to permissions
-          }).on('complete', function (info) {
-            // handle complete
-            $rootScope.$broadcast(dbname);
-          }).on('error', function (err) {
-            // handle error
-            $rootScope.$broadcast(dbname);
-          });
-
-        }
-
+        
         $rootScope.login=function(){
 
-          console.log('$rootScope.username', $rootScope.user.username)
-
+            console.log('2 --> $rootScope.user starting ', JSON.stringify($rootScope.user), 'user from localStorageService', user);
+          
             $rootScope.BASE_URL_AUTH = 'http://195.154.223.114:5984/test'
          
             var db = new PouchDB($rootScope.BASE_URL_AUTH);
             
 
-            db.login($rootScope.user.username, $scope.user.password , function (err,response) {
+            db.login($rootScope.user.username, $rootScope.user.password , function (err,response) {
               if (err) {
                 if (err.name === 'unauthorized') {
                   $scope.error="Userame or Password incorrect";                
@@ -58,30 +28,34 @@
                 }
               }
               else{
-
+              
                 localStorageService.set("user", $rootScope.user);
+ 
+                ApplicationService.sync('users_replicat');
 
-                console.log('Athenticated ', response);
-                $rootScope.BASE_URL = 'http://'+$rootScope.user.username+':'+$scope.user.password+'@195.154.223.114:5984/';
+                ApplicationService.sync('applications');
+
                 
-                $rootScope.sync('users_replicat');
-
-                $rootScope.sync('applications');
-
                 $state.go("home");
 
                 
               }
-
-
-
-              
           });
-
         }
+
+
+        var user = localStorageService.get("user");
+        
+        if(user && user.username){
+            $state.go('home');
+        }
+
+        $rootScope.user = {};
+        console.log('$rootScope.user starting ', $rootScope.user, 'user from localStorageService', user);
+
     }
 
-    LoginCtrl.$inject = ["$q","$state","$rootScope","$scope", "$log","$location", "localStorageService"];
+    LoginCtrl.$inject = ["$q","$state","$rootScope","$scope", "$log","$location", "localStorageService", "ApplicationService"];
 
     angular
         .module('app.login')

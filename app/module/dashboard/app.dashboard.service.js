@@ -3,6 +3,8 @@
 
     function ApplicationService($q, $rootScope) {
 
+
+
         var self = this;
 
     	var URL_APPLICATIONS = "applications";
@@ -12,13 +14,51 @@
     	var dbApplications = new PouchDB(URL_APPLICATIONS);
         var LOCAL_BASE = cordova.file.applicationStorageDirectory+"Documents/WebApps/" ; //"cdvfile://localhost/persistent/Download/WebApps/";//
 
+
+        this.sync = function(dbname){
+          if($rootScope.synced){
+                return;
+          }
+          $rootScope.BASE_URL = 'http://'+$rootScope.user.username+':'+$rootScope.user.password+'@195.154.223.114:5984/';
+               
+          var localDb = new PouchDB(dbname);
+          var url = $rootScope.BASE_URL+dbname;
+          var remoteDb = new PouchDB(url);
+          
+          localDb.sync(remoteDb, {
+            live: true, 
+            retry: true
+          })
+          .on('change', function (info) {
+           })
+          .on('paused', function () {
+            // replication paused (e.g. user went offline)
+            //$rootScope.$broadcast(dbname);
+          }).on('active', function () {
+            // replicate resumed (e.g. user went back online)
+            $rootScope.$broadcast(dbname);
+          }).on('denied', function (info) {
+            // a document failed to replicate, e.g. due to permissions
+             $rootScope.$broadcast(dbname);
+          }).on('complete', function (info) {
+            // handle complete
+            $rootScope.$broadcast(dbname);
+          }).on('error', function (err) {
+            // handle error
+            $rootScope.$broadcast(dbname);
+          });
+
+          $rootScope.synced = true;
+
+        }
+
     	this.getCurrentUser = function(){
     		var currentUserName = "org.couchdb.user:"+$rootScope.user.username;
-    		var defered  = $q.defer();
+            var defered  = $q.defer();
 
     		dbUsers.get(currentUserName).then(function (user) {
     			defered.resolve(user);
-    		}, function(){app
+    		}, function(){
                 defered.reject();
             });
         	return defered.promise;

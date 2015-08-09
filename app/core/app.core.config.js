@@ -6,9 +6,11 @@
         .module('app.core')
         .config(config);
 
-    config.$inject = ['$stateProvider', '$urlRouterProvider'];
+    config.$inject = ['$stateProvider', '$urlRouterProvider', '$compileProvider'];
 
-    function config($stateProvider, $urlRouterProvider) {
+    function config($stateProvider, $urlRouterProvider, $compileProvider) {
+
+        $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|file|blob|cdvfile):|data:image\//);
 
         $stateProvider
           .state('login', {
@@ -28,3 +30,4 @@
     }
 
 })();
+
