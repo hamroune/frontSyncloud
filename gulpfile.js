@@ -214,6 +214,16 @@ gulp.task('cordova:run', shell.task([
   'cordova run android --device'
 ]));
 
+gulp.task('ios:run', shell.task([
+  'cordova run ios --device'
+]));
+
+gulp.task('ios', function(callback) {
+  runSequence("build",
+              "ios:run", 
+              callback);
+});
+
 
 gulp.task('android', function(callback) {
   runSequence("build",

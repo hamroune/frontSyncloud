@@ -3,6 +3,28 @@
 
     function DashboardCtrl($timeout,$q,$state, $rootScope, $scope, $log,$location, MenuService, ApplicationService, localStorageService) {
 
+        
+        $rootScope.$on('users_replicat', function(change){
+            //Pas de changement
+            $scope.isForceDownload = false;
+
+            $timeout(function(){
+              $scope.getApps();
+            }, 1000)
+        });
+
+
+        $rootScope.$on('applications', function(change){
+            //On reload si changement des apps
+            $scope.isForceDownload = true;
+
+            $timeout(function(){
+              $scope.getApps();
+            }, 1000);
+        });
+
+
+
         var user = localStorageService.get("user");
        
         
@@ -16,17 +38,15 @@
 
         ApplicationService.sync('users_replicat');
 
-        ApplicationService.sync('applications');
+        var currentUserName = "org.couchdb.user:"+$rootScope.user.username;
+              
+        ApplicationService.sync('applications', {
+            filter: 'user_filters/by_user',
+            params: { "user": currentUserName }
+        });
 
 
         $scope.showLoader = true;
-
-        $rootScope.$on('users_replicat', function(change){
-            console.log('changes', change);
-            $timeout(function(){
-              $scope.getApps();
-            }, 1000)
-        });
 
         $scope.getApps = function(){
             return ApplicationService.getCurrentUser().then(function(aUser){
@@ -36,14 +56,13 @@
                     promises.push(ApplicationService.getApplication(app));
                 })
                 $q.all(promises).then(function(applications){
+                   
                     $scope.applications = applications;
                     $scope.downloadApps().then(function(){
 
-                        console.log('applications', $scope.applications[$scope.applications.length-2]);
-
                        $timeout(function(){
-                        $scope.showLoader = false;
-                        $scope.$apply();
+                            $scope.showLoader = false;
+                            $scope.$apply();
                       })
                     });
                 });
@@ -85,17 +104,20 @@
               var defered  = $q.defer();
 
               ApplicationService.isAppDownloaded(app).then(function(isAppDownloaded){
-                if(!isAppDownloaded){
-                  var promises = [];
-                  promises.push(ApplicationService.downloadZip(app));
-                  promises.push(ApplicationService.downloadIcon(app));
-                  $q.all(promises).then(function(applications){
-                    app.showProgress = false;
-                    console.log('After Download  app ', app);
-                    defered.resolve(app);
-                }, function(){
-                  app.showProgress = false;
-                });
+
+                console.log('$scope.isForceDownload', $scope.isForceDownload);
+
+                if(!isAppDownloaded || $scope.isForceDownload){
+                      var promises = [];
+                      promises.push(ApplicationService.downloadZip(app));
+                      promises.push(ApplicationService.downloadIcon(app));
+                      $q.all(promises).then(function(applications){
+                            app.showProgress = false;
+                            console.log('After Download  app ', app);
+                            defered.resolve(app);
+                       }, function(){
+                            app.showProgress = false;
+                       });
                  
                 }else{
                   app.icon = ApplicationService.getIcon(app);
@@ -114,6 +136,7 @@
         }
 
 
+        $scope.isForceDownload = false;
 
         $scope.getApps();
 

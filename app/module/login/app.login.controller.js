@@ -4,11 +4,6 @@
     function LoginCtrl($q,$state, $rootScope, $scope, $log, $location, localStorageService, ApplicationService) {
         var that = this;
 
-        $rootScope.lougout = function(){
-          localStorageService.set("user", null);
-          $state.go('login');
-        }
-
         
         $rootScope.login=function(){
 
@@ -31,7 +26,12 @@
               
                 localStorageService.set("user", $rootScope.user);
  
-                ApplicationService.sync('users_replicat');
+                var currentUserName = "org.couchdb.user:"+$rootScope.user.username;
+              
+                ApplicationService.sync('users_replicat', {
+                    filter: 'user_filters/by_user',
+                    params: { "user": currentUserName }
+                });
 
                 ApplicationService.sync('applications');
 

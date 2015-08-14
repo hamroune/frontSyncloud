@@ -1,7 +1,19 @@
 (function () {
     'use strict';
 
-    function ApplicationService($q, $rootScope) {
+    function ApplicationService($q, $rootScope, localStorageService, $state) {
+
+
+        this.getStorageLocation = function(){
+            if(device.platform === 'Android'){
+                return cordova.file.externalApplicationStorageDirectory;
+            }
+            else if(device.platform === 'iOS'){
+                return cordova.file.documentsDirectory;
+            }else{
+                throw new Error('Unsupported platform: '+device.platform);
+            }
+        }
 
 
 
@@ -12,43 +24,64 @@
 
     	var dbUsers = new PouchDB(URL_USERS);
     	var dbApplications = new PouchDB(URL_APPLICATIONS);
-        var LOCAL_BASE = cordova.file.applicationStorageDirectory+"Documents/WebApps/" ; //"cdvfile://localhost/persistent/Download/WebApps/";//
+        var _base = this.getStorageLocation();
+        var LOCAL_BASE = _base+"files/WebApps/"; //cordova.file.dataDirectory+"Documents/WebApps/" ; //android ==> cordova.file.externalApplicationStorageDirectory
+        var LOCAL_BASE_DATA = _base+"files/zip/";
 
 
+        $rootScope.lougout = function(){
+          localStorageService.set("user", null);
+          $state.go('login');
+        }
+
+
+        //Main Method of Sync Replication
         this.sync = function(dbname){
-          if($rootScope.synced){
-                return;
-          }
-          $rootScope.BASE_URL = 'http://'+$rootScope.user.username+':'+$rootScope.user.password+'@195.154.223.114:5984/';
-               
-          var localDb = new PouchDB(dbname);
-          var url = $rootScope.BASE_URL+dbname;
-          var remoteDb = new PouchDB(url);
-          
-          localDb.sync(remoteDb, {
-            live: true, 
-            retry: true
-          })
-          .on('change', function (info) {
-           })
-          .on('paused', function () {
-            // replication paused (e.g. user went offline)
-            //$rootScope.$broadcast(dbname);
-          }).on('active', function () {
-            // replicate resumed (e.g. user went back online)
-            $rootScope.$broadcast(dbname);
-          }).on('denied', function (info) {
-            // a document failed to replicate, e.g. due to permissions
-             $rootScope.$broadcast(dbname);
-          }).on('complete', function (info) {
-            // handle complete
-            $rootScope.$broadcast(dbname);
-          }).on('error', function (err) {
-            // handle error
-            $rootScope.$broadcast(dbname);
-          });
 
-          $rootScope.synced = true;
+            //Prevent null pointer exception
+            if(!$rootScope.synced){
+                $rootScope.synced = {};
+            }
+
+            if($rootScope.synced[dbname]){
+                    return;
+            }
+            
+            $rootScope.BASE_URL = 'http://'+$rootScope.user.username+':'+$rootScope.user.password+'@195.154.223.114:5984/';
+                   
+              var localDb = new PouchDB(dbname);
+              var url = $rootScope.BASE_URL+dbname;
+              var remoteDb = new PouchDB(url);
+
+              var currentUserName = "org.couchdb.user:"+$rootScope.user.username;
+              
+              localDb.sync(remoteDb, {
+                live: true, 
+                retry: true,
+                filter: 'user_filters/by_user',
+                query_params: { "user": currentUserName }
+              })
+              .on('change', function (info) {
+                console.log('CHANGES ==>', info);
+               })
+              .on('paused', function () {
+                // replication paused (e.g. user went offline)
+                //$rootScope.$broadcast(dbname);
+              }).on('active', function () {
+                // replicate resumed (e.g. user went back online)
+                $rootScope.$broadcast(dbname);
+              }).on('denied', function (info) {
+                // a document failed to replicate, e.g. due to permissions
+                 $rootScope.$broadcast(dbname);
+              }).on('complete', function (info) {
+                // handle complete
+                $rootScope.$broadcast(dbname);
+              }).on('error', function (err) {
+                // handle error
+                $rootScope.$broadcast(dbname);
+              });
+
+              $rootScope.synced[dbname] = true;
 
         }
 
@@ -79,11 +112,10 @@
 
         this.downloadZip = function (app){
             var defered  = $q.defer();
-            var LOCAL_BASE = cordova.file.applicationStorageDirectory;//"cdvfile://localhost/persistent/Download/";
             var url = app.zipUrl;//celui de filepicker zipUrl/iconUrl
             var fileTransfer = new FileTransfer();
             var uri = encodeURI(url);
-            var localFile = LOCAL_BASE+app.name;
+            var localFile = LOCAL_BASE_DATA+app._id;
 
             fileTransfer.download(
                             uri,  
@@ -94,8 +126,9 @@
 
                                 self.unzipFile(app, entry).then(function(){
                                     defered.resolve(entry);
+                                }, function(){
+                                    defered.reject()
                                 });
-
                             },
 
                             function(error) {
@@ -111,7 +144,7 @@
 
         this.unzipFile = function(app, entry){
             var defered  = $q.defer();
-            var outputDir = LOCAL_BASE+app.name+"/";
+            var outputDir = LOCAL_BASE+app._id+"/";
 
             var nativeURL = app.nativeURL;
             //Unzip the local Zip file
@@ -123,7 +156,7 @@
         }
 
         this.openApp = function(app){
-            window.open(LOCAL_BASE+app.name+"/index.html", '_self', 'localtion=yes');
+            window.open(LOCAL_BASE+app._id+"/index.html", '_self', 'localtion=yes');
         }
 
         this.downloadIcon = function(app){
@@ -134,7 +167,7 @@
             var url = app.iconUrl;//celui de filepicker zipUrl/iconUrl
             var fileTransfer = new FileTransfer();
             var uri = encodeURI(url);
-            var localFile = LOCAL_BASE+app.name+".png";
+            var localFile = LOCAL_BASE+app._id+".png";
 
             fileTransfer.download(
                             uri,  
@@ -161,7 +194,10 @@
 
 
         this.getIcon = function(app){
-            return LOCAL_BASE+app.name+".png";
+
+            var ts = (new Date()).getTime();
+            console.log('TS ==>', ts);
+            return LOCAL_BASE+app._id+".png?"+ts;
         }
 
         this.isAppDownloaded = function(app){
@@ -169,7 +205,7 @@
             //true vs false
             //alert('isAppDownloaded');
 
-            window.resolveLocalFileSystemURL(LOCAL_BASE+app.name+"/", 
+            window.resolveLocalFileSystemURL(LOCAL_BASE+app._id+"/", 
                 function(){
                     defered.resolve(true);
             }, function(){
@@ -182,7 +218,7 @@
 
     }
 
-    ApplicationService.$inject = ["$q", "$rootScope"];
+    ApplicationService.$inject = ["$q", "$rootScope", "localStorageService", "$state"];
 
     angular
         .module('app.dashboard')
