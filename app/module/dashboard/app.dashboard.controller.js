@@ -3,21 +3,41 @@
 
     function DashboardCtrl($timeout,$q,$state, $rootScope, $scope, $log,$location, MenuService, ApplicationService, localStorageService) {
 
-        
-        $rootScope.$on('users_replicat', function(change){
-            //Pas de changement
-            $scope.isForceDownload = false;
+        $rootScope.error = "";
+        $rootScope.$$listeners['users_replicat']=[];
+        $rootScope.$on('users_replicat', function(ev, change){
+            console.log('users_replicat $ON', change);
+          
+            ApplicationService.getCurrentUser().then(function(user){
+                //Pas de changement
+                $scope.isForceDownload = false;
 
-            $timeout(function(){
-              $scope.getApps();
-            }, 1000)
+                $timeout(function(){
+                  $scope.getApps();
+                }, 1000)
+            });
         });
 
 
-        $rootScope.$on('applications', function(change){
-            //On reload si changement des apps
-            $scope.isForceDownload = true;
 
+        $rootScope.$on('change_users_replicat', function(ev, change){
+            console.log('change_users_replicat $ON', change);
+          
+            ApplicationService.getCurrentUser().then(function(user){
+                //Pas de changement
+                $scope.isForceDownload = false;
+
+                $timeout(function(){
+                  $scope.getApps();
+                }, 1000)
+            });
+        });
+
+        $rootScope.$$listeners['change_applications']=[];
+        $rootScope.$on('change_applications', function(ev, change){
+            //On reload si changement des apps
+            //$scope.isForceDownload = true;
+            $scope.changeApplicationsIds = _.map(change.docs, function(doc){ return doc._id;});
             $timeout(function(){
               $scope.getApps();
             }, 1000);
@@ -35,12 +55,14 @@
 
         $rootScope.user = user;
 
-
-        ApplicationService.sync('users_replicat');
+        ApplicationService.sync('applications', {
+            filter: 'user_apps_filters/by_user_apps',
+            params: { "userApps": $rootScope.user.apps }
+        });
 
         var currentUserName = "org.couchdb.user:"+$rootScope.user.username;
               
-        ApplicationService.sync('applications', {
+        ApplicationService.sync('users_replicat', {
             filter: 'user_filters/by_user',
             params: { "user": currentUserName }
         });
@@ -49,16 +71,22 @@
         $scope.showLoader = true;
 
         $scope.getApps = function(){
+            console.log('getApps called')
             return ApplicationService.getCurrentUser().then(function(aUser){
+                console.log('voici le user recu ', aUser);
                 
                 var promises = [];
                 _.each(aUser.apps, function(app){
                     promises.push(ApplicationService.getApplication(app));
                 })
                 $q.all(promises).then(function(applications){
-                   
-                    $scope.applications = applications;
+                    $scope.applications = _.filter(applications, function(appli){return !!appli});
+
+                    console.log('on recupère les applications', applications);
                     $scope.downloadApps().then(function(){
+
+
+                       $scope.changeApplicationsIds = [];
 
                        $timeout(function(){
                             $scope.showLoader = false;
@@ -68,18 +96,23 @@
                 });
 
             }, function(){
-                alert('Error getting current user')
+                $scope.changeApplicationsIds = [];
+                $rootScope.error = "Ooops! Error getting current user";
             });
         }
 
         $scope.downloadApps = function(){
+            console.log('on appele le downloadApps');
           var defered  = $q.defer();
 
            _.each($scope.applications, function(app){
+            if(app){
               app.showProgress = true;
               $timeout(function(){
                 $scope.$apply();
-              })
+              })  
+            }
+              
            });
 
             $timeout(function(){
@@ -89,6 +122,7 @@
                  });
 
                 $q.all(promises).then(function(){
+                    console.log('l app est dowloadée OK')
                     defered.resolve();
                 });
 
@@ -100,30 +134,38 @@
 
         //Download if no zip, and Icon
         $scope.downloadApp = function(app){
-              app.showProgress = true;
               var defered  = $q.defer();
 
+              if(!app){
+                defered.reject();
+                return;
+              }
+
+              app.showProgress = true;
+
               ApplicationService.isAppDownloaded(app).then(function(isAppDownloaded){
+                console.log('$scope.changeApplicationsIds', $scope.changeApplicationsIds);
 
-                console.log('$scope.isForceDownload', $scope.isForceDownload);
-
-                if(!isAppDownloaded || $scope.isForceDownload){
+                if(!isAppDownloaded  || app.isForceDownload || ($scope.changeApplicationsIds && $scope.changeApplicationsIds.length>0 && $scope.changeApplicationsIds.indexOf(app._id)>=0) ){
                       var promises = [];
                       promises.push(ApplicationService.downloadZip(app));
                       promises.push(ApplicationService.downloadIcon(app));
                       $q.all(promises).then(function(applications){
                             app.showProgress = false;
-                            console.log('After Download  app ', app);
                             defered.resolve(app);
                        }, function(){
                             app.showProgress = false;
+                            defered.resolve(app);
                        });
                  
                 }else{
                   app.icon = ApplicationService.getIcon(app);
                   app.showProgress = false;
-                  defered.resolve();
+                  defered.resolve(app);
                 }
+              }, function(){
+                app.showProgress = false;
+                defered.resolve(app);
               })
               
              return defered.promise;
@@ -136,8 +178,8 @@
         }
 
 
-        $scope.isForceDownload = false;
-
+        //START
+        $scope.changeApplicationsIds = [];
         $scope.getApps();
 
     }

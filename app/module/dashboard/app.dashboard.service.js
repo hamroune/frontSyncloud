@@ -3,6 +3,8 @@
 
     function ApplicationService($q, $rootScope, localStorageService, $state) {
 
+        PouchDB.setMaxListeners(100);
+
 
         this.getStorageLocation = function(){
             if(device.platform === 'Android'){
@@ -36,7 +38,10 @@
 
 
         //Main Method of Sync Replication
-        this.sync = function(dbname){
+        this.sync = function(dbname, options, cb){
+
+
+            console.log('Sync called : $rootScope.synced[dbname]', $rootScope.synced, 'dbname', dbname);
 
             //Prevent null pointer exception
             if(!$rootScope.synced){
@@ -44,35 +49,54 @@
             }
 
             if($rootScope.synced[dbname]){
-                    return;
+                return;
             }
             
+
             $rootScope.BASE_URL = 'http://'+$rootScope.user.username+':'+$rootScope.user.password+'@195.154.223.114:5984/';
                    
               var localDb = new PouchDB(dbname);
               var url = $rootScope.BASE_URL+dbname;
               var remoteDb = new PouchDB(url);
 
-              var currentUserName = "org.couchdb.user:"+$rootScope.user.username;
-              
-              localDb.sync(remoteDb, {
+
+              var syncOptions = {
                 live: true, 
                 retry: true,
-                filter: 'user_filters/by_user',
-                query_params: { "user": currentUserName }
-              })
+                batch_size: 1000
+              } 
+
+              if(options && options.filter && options.params){
+                syncOptions.filter = options.filter,//'user_filters/by_user',
+                syncOptions.query_params = options.params //{ "user": currentUserName }
+              }
+
+              console.log('syncOptions', syncOptions);
+
+              
+              localDb.sync(remoteDb, syncOptions)
               .on('change', function (info) {
-                console.log('CHANGES ==>', info);
+                 var eventName = 'change_'+dbname;
+                 if(info.change.docs && info.change.docs.length>0){
+                    console.log('CHANGES of', dbname,' ==> info.change.docs', info.change.docs, 'eventName', eventName);
+                    $rootScope.$broadcast(eventName, info.change);
+                 }else{
+                    $rootScope.$broadcast(dbname);
+                 }
+
+                 if(cb){
+                    cb();
+                 }
                })
               .on('paused', function () {
                 // replication paused (e.g. user went offline)
-                //$rootScope.$broadcast(dbname);
+                $rootScope.$broadcast(dbname);
               }).on('active', function () {
                 // replicate resumed (e.g. user went back online)
                 $rootScope.$broadcast(dbname);
               }).on('denied', function (info) {
                 // a document failed to replicate, e.g. due to permissions
-                 $rootScope.$broadcast(dbname);
+                $rootScope.$broadcast(dbname);
               }).on('complete', function (info) {
                 // handle complete
                 $rootScope.$broadcast(dbname);
@@ -82,14 +106,39 @@
               });
 
               $rootScope.synced[dbname] = true;
+        }
 
+        this.syncAll = function(){
+
+            $rootScope.synced = {};
+
+            var currentUserName = "org.couchdb.user:"+$rootScope.user.username;
+
+            this.sync('applications', {
+                            filter: 'user_apps_filters/by_user_apps',
+                            params: { "userApps": $rootScope.user.apps }
+                        });
+
+                              
+            this.sync('users_replicat', {
+                            filter: 'user_filters/by_user',
+                            params: { "user": currentUserName }
+                        });
         }
 
     	this.getCurrentUser = function(){
+            console.log('getCurrentUser Called');
     		var currentUserName = "org.couchdb.user:"+$rootScope.user.username;
             var defered  = $q.defer();
 
     		dbUsers.get(currentUserName).then(function (user) {
+                console.log('user is loaded');
+                user.username = $rootScope.user.username;
+                user.password = $rootScope.user.password;
+                $rootScope.user.apps = user.apps;
+
+                localStorageService.set("user", user);
+
     			defered.resolve(user);
     		}, function(){
                 defered.reject();
@@ -98,13 +147,13 @@
     	}
 
         this.getApplication = function(appId){
-
         	var defered  = $q.defer();
-
+            
             var localDB = new PouchDB('applications'); 
             localDB.get(appId).then(function(docs){
-                console.log('docs', docs);
                 defered.resolve(docs);
+            }, function(){
+                defered.resolve();
             });
 
         	return defered.promise;
@@ -112,7 +161,12 @@
 
         this.downloadZip = function (app){
             var defered  = $q.defer();
-            var url = app.zipUrl;//celui de filepicker zipUrl/iconUrl
+            var url = app.zipUrl;
+            if(!url){
+                defered.reject();
+                return;
+            }
+
             var fileTransfer = new FileTransfer();
             var uri = encodeURI(url);
             var localFile = LOCAL_BASE_DATA+app._id;
@@ -121,9 +175,7 @@
                             uri,  
                             localFile,
                             function(entry) {
-                                console.log("download complete: " + entry.toURL());
                                 app.nativeURL = entry.toNativeURL();
-
                                 self.unzipFile(app, entry).then(function(){
                                     defered.resolve(entry);
                                 }, function(){
@@ -165,6 +217,11 @@
 
             //"cdvfile://localhost/persistent/Download/";
             var url = app.iconUrl;//celui de filepicker zipUrl/iconUrl
+            if(!url){
+                defered.reject();
+                return;
+            }
+
             var fileTransfer = new FileTransfer();
             var uri = encodeURI(url);
             var localFile = LOCAL_BASE+app._id+".png";
@@ -174,11 +231,7 @@
                             localFile,
                             function(entry) {
                                 app.icon = entry.toNativeURL();
-
-                                console.log("download Icon complete: " + entry.toURL(), 'app', app);
-
                                 defered.resolve(app);
-
                             },
 
                             function(error) {
@@ -194,16 +247,12 @@
 
 
         this.getIcon = function(app){
-
             var ts = (new Date()).getTime();
-            console.log('TS ==>', ts);
             return LOCAL_BASE+app._id+".png?"+ts;
         }
 
         this.isAppDownloaded = function(app){
             var defered  = $q.defer();
-            //true vs false
-            //alert('isAppDownloaded');
 
             window.resolveLocalFileSystemURL(LOCAL_BASE+app._id+"/", 
                 function(){

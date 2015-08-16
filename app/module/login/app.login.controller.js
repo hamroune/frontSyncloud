@@ -7,13 +7,12 @@
         
         $rootScope.login=function(){
 
-            console.log('2 --> $rootScope.user starting ', JSON.stringify($rootScope.user), 'user from localStorageService', user);
-          
+            $rootScope.synced = {};
+
             $rootScope.BASE_URL_AUTH = 'http://195.154.223.114:5984/test'
          
             var db = new PouchDB($rootScope.BASE_URL_AUTH);
-            
-
+      
             db.login($rootScope.user.username, $rootScope.user.password , function (err,response) {
               if (err) {
                 if (err.name === 'unauthorized') {
@@ -23,24 +22,41 @@
                 }
               }
               else{
-              
-                localStorageService.set("user", $rootScope.user);
- 
-                var currentUserName = "org.couchdb.user:"+$rootScope.user.username;
-              
-                ApplicationService.sync('users_replicat', {
-                    filter: 'user_filters/by_user',
-                    params: { "user": currentUserName }
-                });
 
-                ApplicationService.sync('applications');
+                    
+               var currentUserName = "org.couchdb.user:"+$rootScope.user.username;
 
-                
-                $state.go("home");
+               ApplicationService.getCurrentUser().then(function(user){
+                        ApplicationService.sync('users_replicat', {
+                           filter: 'user_filters/by_user',
+                           params: { "user": currentUserName }
+                        });
 
+                        if(user.apps){
+                            ApplicationService.sync('applications', {
+                                filter: 'user_apps_filters/by_user_apps',
+                                params: { "userApps": user.apps }
+                            });    
+                        }
+
+                    $state.go("home");
+
+               }, function(){
+                        console.log('il n existe pas de user en local, c est un nouveau')
+                        ApplicationService.sync('users_replicat', {
+                           filter: 'user_filters/by_user',
+                           params: { "user": currentUserName }
+                        }, function(){
+                            window.setTimeout(function(){
+                                $state.go("home");
+                            }, 1000);
+                        });
+                        
+               });
                 
               }
           });
+
         }
 
 

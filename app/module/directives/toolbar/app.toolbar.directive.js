@@ -6,7 +6,15 @@
       return {
         restrict: 'E',
         require :"ngModel",
-        templateUrl: 'module/directives/toolbar/toolbar.html'
+        templateUrl: 'module/directives/toolbar/toolbar.html',
+
+         controller : ['$scope', 'ApplicationService',
+				function($scope, ApplicationService) {
+					$scope.syncAll = function(){
+						ApplicationService.syncAll();
+					}
+				}
+			]
   	  };
   });
 })();

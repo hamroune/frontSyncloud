@@ -2,26 +2,29 @@
 <md-content>
 
     
-    <div ng-if="showLoader" >
-            SYNCING.......
+    <div ng-if="error"  style="color: red;">
+      {{error}}
     </div>
 
     <md-list>
-      <md-list-item ng-repeat="app in applications"
-         ng-click="onOpenApp(app)"
-         >
-        <img ng-src="{{app.icon}}" class="md-avatar" />
-        
-        <div class="md-list-item" style="width: 100%;">
-          <h3>{{app.name}}</h3>
-          <span> {{app.msg}}</span>
-          
-          <div ng-if="app.showProgress" layout="column" layout-margin style="padding:25px;">
-            <md-progress-linear md-mode="indeterminate"></md-progress-linear>
-          </div>
+            <md-list-item ng-repeat="app in applications"
+                          ng-click="onOpenApp(app)" >
+              <!-- ICON -->
+              <img ng-show="!app.showProgress"  ng-src="{{app.icon}}" class="md-avatar">
+  
+              <!-- Circle-->
+              <div ng-show="app.showProgress" layout="column" layout-margin style="width: 40px; height: 40px;">
+                <div layout="row" layout-sm="column" layout-align="space-around">
+                  <md-progress-circular class="md-warn md-hue-3" md-mode="indeterminate"></md-progress-circular>
+                </div>
+              </div>
 
+              <!-- APP -->
+              <div>
+                <h3>{{app.name}}</h3>
+                <span>{{app.msg}}</span>
+              </div>
 
-        </div>
-      </md-list-item>
-    </md-list>
+          </md-list-item>
+   </md-list>
 </md-content>
