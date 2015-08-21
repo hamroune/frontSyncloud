@@ -7,7 +7,7 @@
         $rootScope.$$listeners['users_replicat']=[];
         $rootScope.$on('users_replicat', function(ev, change){
             console.log('users_replicat $ON', change);
-          
+
             ApplicationService.getCurrentUser().then(function(user){
                 //Pas de changement
                 $scope.isForceDownload = false;
@@ -22,7 +22,7 @@
 
         $rootScope.$on('change_users_replicat', function(ev, change){
             console.log('change_users_replicat $ON', change);
-          
+
             ApplicationService.getCurrentUser().then(function(user){
                 //Pas de changement
                 $scope.isForceDownload = false;
@@ -46,8 +46,8 @@
 
 
         var user = localStorageService.get("user");
-       
-        
+
+
         if(!!!user || !!!user.username){
             $state.go('login');
             return;
@@ -61,7 +61,7 @@
         });
 
         var currentUserName = "org.couchdb.user:"+$rootScope.user.username;
-              
+
         ApplicationService.sync('users_replicat', {
             filter: 'user_filters/by_user',
             params: { "user": currentUserName }
@@ -74,7 +74,7 @@
             console.log('getApps called')
             return ApplicationService.getCurrentUser().then(function(aUser){
                 console.log('voici le user recu ', aUser);
-                
+
                 var promises = [];
                 _.each(aUser.apps, function(app){
                     promises.push(ApplicationService.getApplication(app));
@@ -110,9 +110,9 @@
               app.showProgress = true;
               $timeout(function(){
                 $scope.$apply();
-              })  
+              })
             }
-              
+
            });
 
             $timeout(function(){
@@ -157,7 +157,7 @@
                             app.showProgress = false;
                             defered.resolve(app);
                        });
-                 
+
                 }else{
                   app.icon = ApplicationService.getIcon(app);
                   app.showProgress = false;
@@ -167,13 +167,13 @@
                 app.showProgress = false;
                 defered.resolve(app);
               })
-              
+
              return defered.promise;
         }
 
         $scope.onOpenApp = function(app){
           $scope.downloadApp(app).then(function(){
-            ApplicationService.openApp(app);
+            ApplicationService.openApp(app)
           });
         }
 

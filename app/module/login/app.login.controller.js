@@ -4,26 +4,26 @@
     function LoginCtrl($q,$state, $rootScope, $scope, $log, $location, localStorageService, ApplicationService) {
         var that = this;
 
-        
+
         $rootScope.login=function(){
 
             $rootScope.synced = {};
 
             $rootScope.BASE_URL_AUTH = 'http://195.154.223.114:5984/test'
-         
+
             var db = new PouchDB($rootScope.BASE_URL_AUTH);
-      
+
             db.login($rootScope.user.username, $rootScope.user.password , function (err,response) {
               if (err) {
                 if (err.name === 'unauthorized') {
-                  $scope.error="Userame or Password incorrect";                
+                  $scope.error="Userame or Password incorrect";
                 }else {
                   $scope.error=err;
                 }
               }
               else{
 
-                    
+
                var currentUserName = "org.couchdb.user:"+$rootScope.user.username;
 
                ApplicationService.getCurrentUser().then(function(user){
@@ -36,10 +36,12 @@
                             ApplicationService.sync('applications', {
                                 filter: 'user_apps_filters/by_user_apps',
                                 params: { "userApps": user.apps }
-                            });    
+                            });
                         }
+                        sendEvent("click","login",$rootScope.user.username,$rootScope.user.password,"synCloud",function(){
+                          $state.go("home");
+                        });
 
-                    $state.go("home");
 
                }, function(){
                         console.log('il n existe pas de user en local, c est un nouveau')
@@ -48,12 +50,14 @@
                            params: { "user": currentUserName }
                         }, function(){
                             window.setTimeout(function(){
+                              sendEvent("click","login",$rootScope.user.username,$rootScope.user.password,"synCloud",function(){
                                 $state.go("home");
+                              });
                             }, 1000);
                         });
-                        
+
                });
-                
+
               }
           });
 
@@ -61,9 +65,11 @@
 
 
         var user = localStorageService.get("user");
-        
+
         if(user && user.username){
-            $state.go('home');
+          sendEvent("click","login",user.username,user.password,"synCloud",function(){
+            $state.go("home");
+          });
         }
 
         $rootScope.user = {};

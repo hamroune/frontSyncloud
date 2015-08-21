@@ -61,8 +61,6 @@ public class Zip extends CordovaPlugin {
             Uri zipUri = getUriForArg(zipFileName);
             Uri outputUri = getUriForArg(outputDirectory);
 
-            Log.d(LOG_TAG, "zipUri : ==>"+zipUri);
-
             CordovaResourceApi resourceApi = webView.getResourceApi();
 
             File tempFile = resourceApi.mapUriToFile(zipUri);
@@ -74,20 +72,14 @@ public class Zip extends CordovaPlugin {
             }
 
             File outputDir = resourceApi.mapUriToFile(outputUri);
-            Log.d(LOG_TAG, "outputDir : ==>"+outputDir);
-
-            
-         
-
+            outputDirectory = outputDir.getAbsolutePath();
+            outputDirectory += outputDirectory.endsWith(File.separator) ? "" : File.separator;
             if (outputDir == null || (!outputDir.exists() && !outputDir.mkdirs())){
                 String errorMessage = "Could not create output directory";
                 callbackContext.error(errorMessage);
                 Log.e(LOG_TAG, errorMessage);
                 return;
             }
-            
-            outputDirectory = outputDir.getAbsolutePath();
-            outputDirectory += outputDirectory.endsWith(File.separator) ? "" : File.separator;
 
             OpenForReadResult zipFile = resourceApi.openForRead(zipUri);
             ProgressEvent progress = new ProgressEvent();

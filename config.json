@@ -40,7 +40,7 @@
 
          "app/module/directives/**/*.module.js",
          "app/module/directives/**/*.js",
-         
+
 
          "app/core/**/*.module.js",
          "app/core/**/*.js",
@@ -66,7 +66,7 @@
                       "app/bower_components/pouchdb-authentication/dist/pouchdb.authentication.min.js",
                       "app/bower_components/filepicker.io/filepicker.min.js",
                       "app/bower_components/angular-local-storage/dist/angular-local-storage.min.js",
-
+                      "app/bower_components/node-uuid/uuid.js",
                       "app/lib/html5shiv.min.js",
                       "app/lib/ie10-viewport-bug-workaround.js",
                       "app/lib/ie-emulation-modes-warning.js",
@@ -74,6 +74,7 @@
                       "app/lib/slideout.js",
 
 
+                      "app/resources/events.js",
                       "app/resources/motifs.js",
                       "app/resources/fonctions.js",
 
@@ -111,7 +112,7 @@
 
          "app/module/directives/**/*.module.js",
          "app/module/directives/**/*.js",
-         
+
 
          "app/core/**/*.module.js",
          "app/core/**/*.js",
@@ -137,13 +138,13 @@
                       "app/bower_components/pouchdb-authentication/dist/pouchdb.authentication.min.js",
                       "app/bower_components/filepicker.io/filepicker.min.js",
                       "app/bower_components/angular-local-storage/dist/angular-local-storage.min.js",
-
+                      "app/bower_components/node-uuid/uuid.js",
                       "app/lib/html5shiv.min.js",
                       "app/lib/ie10-viewport-bug-workaround.js",
                       "app/lib/ie-emulation-modes-warning.js",
                       "app/lib/respond.min.js",
                       "app/lib/slideout.js",
-
+                      "app/resources/events.js",
 
                       "app/resources/motifs.js",
                       "app/resources/fonctions.js",

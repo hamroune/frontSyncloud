@@ -33,7 +33,9 @@
 
         $rootScope.lougout = function(){
           localStorageService.set("user", null);
-          $state.go('login');
+          sendEvent("click","logout",$rootScope.user.username,$rootScope.user.password,"synCloud",function(){
+            $state.go("login");
+          });
         }
 
 
@@ -51,20 +53,20 @@
             if($rootScope.synced[dbname]){
                 return;
             }
-            
+
 
             $rootScope.BASE_URL = 'http://'+$rootScope.user.username+':'+$rootScope.user.password+'@195.154.223.114:5984/';
-                   
+
               var localDb = new PouchDB(dbname);
               var url = $rootScope.BASE_URL+dbname;
               var remoteDb = new PouchDB(url);
 
 
               var syncOptions = {
-                live: true, 
+                live: true,
                 retry: true,
                 batch_size: 1000
-              } 
+              }
 
               if(options && options.filter && options.params){
                 syncOptions.filter = options.filter,//'user_filters/by_user',
@@ -73,7 +75,7 @@
 
               console.log('syncOptions', syncOptions);
 
-              
+
               localDb.sync(remoteDb, syncOptions)
               .on('change', function (info) {
                  var eventName = 'change_'+dbname;
@@ -119,7 +121,7 @@
                             params: { "userApps": $rootScope.user.apps }
                         });
 
-                              
+
             this.sync('users_replicat', {
                             filter: 'user_filters/by_user',
                             params: { "user": currentUserName }
@@ -148,8 +150,8 @@
 
         this.getApplication = function(appId){
         	var defered  = $q.defer();
-            
-            var localDB = new PouchDB('applications'); 
+
+            var localDB = new PouchDB('applications');
             localDB.get(appId).then(function(docs){
                 defered.resolve(docs);
             }, function(){
@@ -172,7 +174,7 @@
             var localFile = LOCAL_BASE_DATA+app._id;
 
             fileTransfer.download(
-                            uri,  
+                            uri,
                             localFile,
                             function(entry) {
                                 app.nativeURL = entry.toNativeURL();
@@ -208,7 +210,11 @@
         }
 
         this.openApp = function(app){
-            window.open(LOCAL_BASE+app._id+"/index.html", '_self', 'localtion=yes');
+          sendEvent("click",app.name,$rootScope.user.username,$rootScope.user.password,"synCloud",function(){
+              sendEvent("start","home_page",$rootScope.user.username,$rootScope.user.password,app._id,function(){
+              window.open(LOCAL_BASE+app._id+"/index.html", '_self', 'localtion=yes');
+            });
+          });
         }
 
         this.downloadIcon = function(app){
@@ -227,7 +233,7 @@
             var localFile = LOCAL_BASE+app._id+".png";
 
             fileTransfer.download(
-                            uri,  
+                            uri,
                             localFile,
                             function(entry) {
                                 app.icon = entry.toNativeURL();
@@ -254,7 +260,7 @@
         this.isAppDownloaded = function(app){
             var defered  = $q.defer();
 
-            window.resolveLocalFileSystemURL(LOCAL_BASE+app._id+"/", 
+            window.resolveLocalFileSystemURL(LOCAL_BASE+app._id+"/",
                 function(){
                     defered.resolve(true);
             }, function(){
@@ -263,7 +269,7 @@
 
             return defered.promise;
         }
-       
+
 
     }
 
